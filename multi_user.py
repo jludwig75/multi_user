@@ -56,15 +56,18 @@ def GetUser():
     return session.GetUser()
 
 class MultiUserController(object):
+    
+    def authenticate_access(self):
+        if not GetUser():
+            raise cherrypy.HTTPRedirect("/login")
 
     def index(self):
+        self.authenticate_access()
+        
         return self.render_index()
     index.exposed = True
     
     def render_index(self):
-        if not GetUser():
-            raise cherrypy.HTTPRedirect("/login")
-        
         tmpl = lookup.get_template("index.html")
         return tmpl.render()
     
